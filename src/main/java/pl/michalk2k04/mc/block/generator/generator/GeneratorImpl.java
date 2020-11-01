@@ -52,8 +52,8 @@ public class GeneratorImpl implements Generator
         this.material = pattern.getMaterial();
         this.worldName = Objects.requireNonNull(location.getWorld()).getName();
         this.x = location.getBlockX();
-        this.y = location.getBlockX();
-        this.z = location.getBlockX();
+        this.y = location.getBlockY();
+        this.z = location.getBlockZ();
         this.destroyed = false;
         this.lastDestroyed = System.currentTimeMillis();
         this.respawnTime = pattern.getRespawnTime();
@@ -88,6 +88,10 @@ public class GeneratorImpl implements Generator
     @Override
     public boolean isThisGenerator(Location location)
     {
+        if (x == location.getBlockX())
+            if (y == location.getBlockY())
+                if(z == location.getBlockZ())
+                    return worldName.equalsIgnoreCase(Objects.requireNonNull(location.getWorld()).getName());
         return false;
     }
 

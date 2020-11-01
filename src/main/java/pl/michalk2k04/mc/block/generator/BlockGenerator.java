@@ -56,6 +56,8 @@ public class BlockGenerator extends JavaPlugin
     @Override
     public void onLoad()
     {
+        if (!getDataFolder().exists())
+            getDataFolder().mkdir();
         try
         {
             Gson gson = new GsonBuilder().setPrettyPrinting().serializeNulls().create();
@@ -64,6 +66,8 @@ public class BlockGenerator extends JavaPlugin
                 configFile.createNewFile();
                 FileWriter writer = new FileWriter(configFile);
                 writer.write(gson.toJson(new BlockGeneratorConfig()));
+                writer.flush();
+                writer.close();
                 blockGeneratorConfig = new BlockGeneratorConfig();
             }
             else
@@ -72,6 +76,7 @@ public class BlockGenerator extends JavaPlugin
                 {
                     StringBuilder contentBuilder = new StringBuilder();
                     stream.forEach(s -> contentBuilder.append(s).append("\n"));
+                    blockGeneratorConfig = gson.fromJson(contentBuilder.toString(),BlockGeneratorConfig.class);
                 }
                 catch (IOException e)
                 {

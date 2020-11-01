@@ -41,17 +41,20 @@ public class BlockGeneratorTabComplete implements TabCompleter
         }
         else if (args.length == 2)
         {
-            if (args[0].equalsIgnoreCase("get"))
+            if (args[0].equalsIgnoreCase("get") || args[0].equalsIgnoreCase("remove") )
             {
-                blockGenerator.getDataController().getGeneratorPatterns().keySet().forEach(x ->
-                        list.add(x.toString()));
+                if (!blockGenerator.getDataController().getGeneratorPatterns().isEmpty())
+                    blockGenerator.getDataController().getGeneratorPatterns().keySet().forEach(x ->
+                            {
+                                if (args[1].isEmpty() || String.valueOf(x).startsWith(args[1])) list.add(String.valueOf(x));
+                            });
             }
             else
             {
                 Arrays.stream(Material.values()).forEach(x ->
                 {
                     if (x.isSolid() && x.isBlock())
-                        list.add(x.toString());
+                        if (args[1].isEmpty() || String.valueOf(x).startsWith(args[1])) list.add(String.valueOf(x));
                 });
             }
         }

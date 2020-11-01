@@ -29,16 +29,19 @@ public class BlockGeneratorConfig
 
     private final String generatorNotExist;
 
+    private final long refreshTime;
+
     @SuppressWarnings("unused")
-    public BlockGeneratorConfig(String wrongUsage, String inThisPlaceGeneratorAlredyIs, String generatorPlaced, String generatorCreated, String generatorRemoved, String youGotGenerator, String generatorNotExist)
+    public BlockGeneratorConfig(String wrongUsage, String inThisPlaceGeneratorAlredyIs, String generatorPlaced, String generatorCreated, String generatorRemoved, String youGotGenerator, String generatorNotExist, long refreshTime)
     {
-        this.wrongUsage = ChatColor.translateAlternateColorCodes('&' , wrongUsage);
-        this.inThisPlaceGeneratorAlredyIs = ChatColor.translateAlternateColorCodes('&' , inThisPlaceGeneratorAlredyIs);
-        this.generatorPlaced = ChatColor.translateAlternateColorCodes('&' , generatorPlaced);
-        this.generatorCreated = ChatColor.translateAlternateColorCodes('&' , generatorCreated);
-        this.generatorRemoved = ChatColor.translateAlternateColorCodes('&' , generatorRemoved);
-        this.youGotGenerator = ChatColor.translateAlternateColorCodes('&' , youGotGenerator);
-        this.generatorNotExist = ChatColor.translateAlternateColorCodes('&' , generatorNotExist);
+        this.wrongUsage =  wrongUsage;
+        this.inThisPlaceGeneratorAlredyIs =  inThisPlaceGeneratorAlredyIs;
+        this.generatorPlaced =  generatorPlaced;
+        this.generatorCreated =  generatorCreated;
+        this.generatorRemoved =  generatorRemoved;
+        this.youGotGenerator =  youGotGenerator;
+        this.generatorNotExist =  generatorNotExist;
+        this.refreshTime = refreshTime;
     }
 
     public BlockGeneratorConfig()
@@ -50,6 +53,7 @@ public class BlockGeneratorConfig
         this.generatorRemoved = ChatColor.RED+"The generator has been removed!";
         this.youGotGenerator =  ChatColor.GREEN+"You got a generator!";
         generatorNotExist = ChatColor.RED+"The generator not exist!";
+        refreshTime = 200;
     }
 
     public static String getConfigFileName()
@@ -90,5 +94,10 @@ public class BlockGeneratorConfig
     public String getGeneratorNotExist()
     {
         return generatorNotExist;
+    }
+
+    public long getRefreshTime()
+    {
+        return refreshTime;
     }
 }

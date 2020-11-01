@@ -39,7 +39,7 @@ public class DataController
     
     private final File generatorsFolder;
 
-    private final File paternsFile;
+    private final File paternsFolder;
 
     private final Timer repairer;
 
@@ -49,7 +49,7 @@ public class DataController
     {
         this.blockGenerator = blockGenerator;
         this.generatorsFolder = new File(blockGenerator.getDataFolder() + File.separator + "generators");
-        this.paternsFile = new File(blockGenerator.getDataFolder()+File.separator+"generatorsPatterns.json");
+        this.paternsFolder = new File(blockGenerator.getDataFolder()+File.separator+"patterns");
         this.generators = new ArrayList<>();
         this.generatorPatterns = new HashMap<>();
         load();
@@ -88,25 +88,30 @@ public class DataController
                     }
                 }
             }
-        }, 0, 100);
+        }, 0, blockGenerator.getBlockGeneratorConfig().getRefreshTime());
     }
 
     private void load()
     {
         checkFiles();
 
-        StringBuilder contentBuilder = new StringBuilder();
-
-        try (Stream<String> stream = Files.lines( Paths.get(paternsFile.getAbsolutePath()), StandardCharsets.UTF_8))
+        for (File file : Objects.requireNonNull(paternsFolder.listFiles()))
         {
-            stream.forEach(s -> contentBuilder.append(s).append("\n"));
+            if (file.getName().endsWith(".json"))
+            {
+                try (Stream<String> stream = Files.lines( Paths.get(file.getAbsolutePath()), StandardCharsets.UTF_8))
+                {
+                    StringBuilder sb = new StringBuilder();
+                    stream.forEach(s -> sb.append(s).append("\n"));
+                    GeneratorPattern generator = gson.fromJson(sb.toString(),GeneratorPattern.class);
+                    generatorPatterns.put(generator.getMaterial(),generator);
+                }
+                catch (IOException e)
+                {
+                    e.printStackTrace();
+                }
+            }
         }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-
-        generatorPatterns.putAll(gson.fromJson(contentBuilder.toString().trim(),generatorPatterns.getClass()));
 
         for (File file : Objects.requireNonNull(generatorsFolder.listFiles()))
         {
@@ -130,14 +135,25 @@ public class DataController
     @SuppressWarnings("ResultOfMethodCallIgnored")
     public void save() throws IOException
     {
+        paternsFolder.deleteOnExit();
         generatorsFolder.deleteOnExit();
 
         checkFiles();
 
-        FileWriter writer = new FileWriter(paternsFile);
-        writer.write(gson.toJson(generatorPatterns));
-        writer.flush();
-        writer.close();
+        for (GeneratorPattern generator : generatorPatterns.values())
+        {
+            File generatorFile = new File(paternsFolder.getAbsolutePath()+File.separator+generator.getMaterial().toString()+".json");
+
+            if (!generatorFile.exists())
+                generatorFile.createNewFile();
+
+            FileWriter fileWriter = new FileWriter(generatorFile);
+
+            fileWriter.write(gson.toJson(generator));
+            fileWriter.flush();
+            fileWriter.close();
+
+        }
 
         for (Generator generator : generators)
         {
@@ -158,25 +174,13 @@ public class DataController
     @SuppressWarnings("ResultOfMethodCallIgnored")
     private void checkFiles()
     {
-        try
-        {
-            if (!blockGenerator.getDataFolder().exists())
-                blockGenerator.getDataFolder().mkdir();
-            if (!generatorsFolder.exists())
-                generatorsFolder.mkdir();
-            if (!paternsFile.exists())
-            {
-                paternsFile.createNewFile();
-                FileWriter writer = new FileWriter(paternsFile);
-                writer.write(gson.toJson(generatorPatterns));
-                writer.flush();
-                writer.close();
-            }
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
+        if (!blockGenerator.getDataFolder().exists())
+            blockGenerator.getDataFolder().mkdir();
+        if (!generatorsFolder.exists())
+            generatorsFolder.mkdir();
+        if (!paternsFolder.exists())
+            paternsFolder.mkdir();
+
     }
 
     public BlockGenerator getBlockGenerator()
@@ -196,7 +200,12 @@ public class DataController
 
     public void addGeneratorPattern(GeneratorPattern pattern)
     {
-        generatorPatterns.putIfAbsent(pattern.getMaterial(),pattern);
+        if (generatorPatterns.containsKey(pattern.getMaterial()))
+        {
+            generatorPatterns.remove(pattern.getMaterial());
+        }
+        generatorPatterns.put(pattern.getMaterial(), pattern);
+
     }
 
     public ItemStack getGeneratorPatternItem(Material material)

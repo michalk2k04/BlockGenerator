@@ -11,6 +11,8 @@ package pl.michalk2k04.mc.block.generator.listeners;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 import pl.michalk2k04.mc.block.generator.BlockGenerator;
 import pl.michalk2k04.mc.block.generator.generator.Generator;
 import pl.michalk2k04.mc.block.generator.generator.GeneratorImpl;
@@ -27,17 +29,16 @@ public class OnGeneratorPlace implements Listener
         this.blockGenerator = blockGenerator;
     }
 
-    @SuppressWarnings("SuspiciousMethodCalls")
     @EventHandler
     public void onBlockPlaceEvent(BlockPlaceEvent event)
     {
         if (blockGenerator.getDataController().getGeneratorPatterns().containsKey(event.getItemInHand().getType()))
         {
-            GeneratorPattern pattern = blockGenerator.getDataController().getGeneratorPatterns().get(event.getItemInHand());
+            GeneratorPattern pattern = blockGenerator.getDataController().getGeneratorPatterns().get(event.getItemInHand().getType());
 
             if (Objects.requireNonNull(event.getItemInHand().getItemMeta()).getDisplayName().equals(pattern.getName()))
             {
-                Generator generator = new GeneratorImpl(event.getBlockPlaced().getLocation(),pattern);
+                Generator generator = new GeneratorImpl(event.getBlock().getLocation(),pattern);
 
                 blockGenerator.getDataController().getGenerators().add(generator);
 

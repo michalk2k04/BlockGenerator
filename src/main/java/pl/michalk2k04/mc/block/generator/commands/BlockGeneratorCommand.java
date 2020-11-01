@@ -80,12 +80,17 @@ public class BlockGeneratorCommand implements CommandExecutor
 
                 StringBuilder sb = new StringBuilder();
 
-                for (int i = 2 ; i < args.length ; i ++)
+                for (int i = 3 ; i < args.length ; i ++)
                 {
-                    sb.append(args[i]).append("\n");
+                    sb.append(args[i]).append(" ");
                 }
 
-                GeneratorPattern pattern = new GeneratorPattern(material,sb.toString(),respawTime);
+                String string = sb.toString().replace('&','§').trim();
+
+                if (!string.startsWith("§"))
+                    string = "§1"+string;
+
+                GeneratorPattern pattern = new GeneratorPattern(material,string,respawTime);
 
                 blockGenerator.getDataController().addGeneratorPattern(pattern);
 
