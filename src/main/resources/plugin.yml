@@ -1,0 +1,15 @@
+name: BlockGenerator
+version: 1.0
+description: Plugin designed to create block generators
+author: michalk2k04
+website: https://github.com/michalk2k04
+api-version: 1.13
+main: pl.michalk2k04.mc.block.generator.BlockGenerator
+
+
+commands:
+  blockgenerator:
+    description: Informacje.
+    aliases: [ bg, blockGenerator ]
+    permission: blockgenerator.blockgenerator
+    usage: /bg <ADD/REMOVE/GET> <MATERIAL> <RESPAWN TIME> <GENERATOR NAME>

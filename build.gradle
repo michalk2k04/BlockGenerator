@@ -1,0 +1,33 @@
+plugins {
+    id 'java'
+    id "com.github.johnrengelman.shadow" version "6.1.0"
+}
+
+group 'pl.michalk2k04.mc.block.generator'
+version '1.0'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava.options.encoding = 'UTF-8'
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+shadowJar {
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://plugins.gradle.org/m2/" }
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots" }
+}
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+    compileOnly "com.github.jengelman.gradle.plugins:shadow:6.1.0"
+    compileOnly "org.spigotmc:spigot-api:1.16.3-R0.1-SNAPSHOT"
+}
